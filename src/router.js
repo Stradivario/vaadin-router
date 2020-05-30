@@ -16,6 +16,9 @@ import {
   notFoundResult
 } from './utils.js';
 
+import CLICK from './triggers/click.js';
+import POPSTATE from './triggers/popstate.js';
+
 const MAX_REDIRECT_COUNT = 256;
 
 function isResultNotEmpty(result) {
@@ -184,9 +187,7 @@ export class Router extends Resolver {
     }, options));
 
     this.resolveRoute = context => this.__resolveRoute(context);
-
-    const triggers = Router.NavigationTrigger;
-    Router.setTriggers.apply(Router, Object.keys(triggers).map(key => triggers[key]));
+    setNavigationTriggers([POPSTATE, CLICK]);
 
     /**
      * The base URL for all routes in the router instance. By default,
@@ -933,25 +934,6 @@ export class Router extends Resolver {
     }
   }
 
-  /**
-   * Configures what triggers Router navigation events:
-   *  - `POPSTATE`: popstate events on the current `window`
-   *  - `CLICK`: click events on `<a>` links leading to the current page
-   *
-   * This method is invoked with the pre-configured values when creating a new Router instance.
-   * By default, both `POPSTATE` and `CLICK` are enabled. This setup is expected to cover most of the use cases.
-   *
-   * See the `router-config.js` for the default navigation triggers config. Based on it, you can
-   * create the own one and only import the triggers you need, instead of pulling in all the code,
-   * e.g. if you want to handle `click` differently.
-   *
-   * See also **Navigation Triggers** section in [Live Examples](#/classes/Router/demos/demo/index.html).
-   *
-   * @param {...NavigationTrigger} triggers
-   */
-  static setTriggers(...triggers) {
-    setNavigationTriggers(triggers);
-  }
 
   /**
    * Generates a URL for the route with the given name, optionally performing
